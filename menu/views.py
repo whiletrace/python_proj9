@@ -8,13 +8,10 @@ from .models import *
 from .forms import *
 
 def menu_list(request):
-    all_menus = Menu.objects.all()
-    menus = []
-    for menu in all_menus:
-        if menu.expiration_date >= timezone.now():
-            menus.append(menu)
 
-    menus = sorted(menus, key=attrgetter('expiration_date'))
+    menus = Menu.objects.filter(expiration_date__lte=timezone.now()).order_by(
+        'expiration_date').prefetch_related('items')
+
     return render(request, 'menu/list_all_current_menus.html', {'menus': menus})
 
 def menu_detail(request, pk):
