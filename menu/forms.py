@@ -13,7 +13,7 @@ class MenuForm(forms.ModelForm):
         season = ['autumn', 'fall', 'winter', 'spring', 'summer']
         if data.lower() not in season[:]:
             raise forms.ValidationError('you have not entered a proper'
-                                        'season please do so ')
+                                        ' season please do so')
         return data
 
     class Meta:
