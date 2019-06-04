@@ -13,6 +13,7 @@ client = Client
 
 # models tests
 class TestModels(TestCase):
+
     def setUp(self):
         """
         creates model instances of User, Menu, Item
@@ -28,13 +29,13 @@ class TestModels(TestCase):
         """
         user = User.objects.create_user(username='trace')
 
-        menu = Menu.objects.create(
+        self.menu = Menu.objects.create(
             season='spring',
             created_date=datetime.date.today(),
             expiration_date=datetime.date(year=2007, month=12, day=25)
-        )
+            )
 
-        items = Item.objects.create(
+        self.items = Item.objects.create(
             name='soda',
             description='a very yummy type of thing',
             chef=user,
@@ -43,8 +44,8 @@ class TestModels(TestCase):
             )
 
     ingredients = Ingredient.objects.create(
-            name='swiss miss'
-             )
+        name='swiss miss'
+        )
 
     def test_model(self):
         """
@@ -57,8 +58,6 @@ class TestModels(TestCase):
         :rtype: object
         """
         menu = Menu.objects.get(season='spring')
-        item = Item.objects.get(name='soda')
-        menu.items.add(item)
 
         self.assertIsInstance(menu, Menu)
         self.assertTrue(menu, type(object))
@@ -113,6 +112,11 @@ class TestViews(TestCase):
 
         spring_menu.items.add(spring_items)
         spring_menu.save()
+
+        self.form_data = {'season': 'spring',
+                          'items': [spring_items],
+                          'expiration_date': '2007-12-25'
+                          }
 
     def test_menu_list(self):
         """
@@ -169,15 +173,18 @@ class TestViews(TestCase):
         self.assertEquals(resp.status_code, 200)
         self.assertEqual(self.items, resp.context['item'])
 
+    # test to cover create_new_menu
+    # not getting coverage in view as expected
+    # reviewer please add suggestions so
+    # to help me get better penetration
 
-class TestForms(TestCase):
-
-    def setUp(self):
-        self.form_data = {'season': 'spring',
-                          'items': Menu.items.values()[:3],
-                          'expiration_date': '2007-12-25'}
-
-    def test_MenuForm_Valid(self):
+    def test_create_new_menu(self):
         form = MenuForm(data=self.form_data)
-        print(form.errors)
+
         self.assertTrue(form.is_valid())
+        req = self.client.post('/menu/new/', {'form': form})
+        self.assertEquals(req.status_code, 200)
+        self.assertEquals(Menu.objects.last().expiration_date, datetime.date(
+            year=2007, month=12, day=25))
+
+        self.assertTemplateUsed(req, 'menu/menu_edit.html')

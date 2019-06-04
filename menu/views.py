@@ -32,7 +32,6 @@ def menu_detail(request, pk):
     detail of menu that matches menu_id passed through URL
     items this is stored in the variable menu and is passed
     as context to the menu_detail.html template
-
     :param request: HTTP GET Request
     :type request: object
     :param pk: menu_id
@@ -75,7 +74,6 @@ def create_new_menu(request):
         the form will save and a new Model object instance
         of Menu will be created with its attributes values defined
         within the forms fields
-
         :param request: HTTP POST request
         :type request: object
         :return: HTTP Response
@@ -107,7 +105,6 @@ def edit_menu(request, pk):
         the form will save and a new Model object instance
         of Menu will be created with its attributes values defined
         within the forms fields
-
         :param pk: menu_id
         :type pk: int
         :param request: HTTP POST request
